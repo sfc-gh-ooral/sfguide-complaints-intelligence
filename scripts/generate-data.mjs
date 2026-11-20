@@ -86,7 +86,7 @@ const SUBS = [
   ['Repossession', 'Repossession', ['Auto loan'], 'Repossession', 130, [
     'My car was repossessed even though I was only {n} days behind and had a payment arrangement.',
     'The vehicle was repossessed and my personal belongings inside were never returned.']],
-  ['Add-on product refund', 'Fees or interest', ['Auto loan'], 'Fees or interest', 120, [
+  ['GAP or add-on product refund', 'Fees or interest', ['Auto loan'], 'Fees or interest', 120, [
     'I paid off my auto loan early and never received the refund for the GAP coverage of {amt}.']],
   ['Customer service', 'Customer service', ['Deposits', 'Credit card', 'Mortgage', 'Auto loan'], 'Customer service', 900, [
     'I have called {n} times about this and nobody calls me back.',
@@ -131,7 +131,7 @@ function status(received, product, sub) {
   const late = rnd() < 0.07;
   const days = late ? int(DUE_DAYS + 1, DUE_DAYS + 12) : int(1, DUE_DAYS);
   const resolved = addDays(received, Math.min(days, Math.max(1, Math.floor(age))));
-  const res = /fee|Late|Rewards|Add-on|Overdraft/.test(sub) ? pick(['Fee refunded', 'Fee refunded', 'Explanation provided', 'Credit applied'])
+  const res = /fee|Late|Rewards|GAP|Overdraft/.test(sub) ? pick(['Fee refunded', 'Fee refunded', 'Explanation provided', 'Credit applied'])
     : /report/.test(sub) ? pick(['Credit report corrected', 'Explanation provided']) : pick(['Explanation provided', 'Account corrected', 'Monetary relief', 'No action warranted']);
   void product;
   return { status: 'Resolved', resolved_date: resolved, resolution: res };
