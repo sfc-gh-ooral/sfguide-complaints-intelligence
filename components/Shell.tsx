@@ -1,82 +1,63 @@
 'use client';
 
-// App frame: navigation, the Live/Sample switch, the hosted-example notice, and the disclaimer.
-import { Gauge, Inbox, Landmark, Menu, MessageSquareText, MessagesSquare, TrendingUp, X } from 'lucide-react';
+// App frame: top bar with the Tallowmark brand, section tabs, environment badge, Live/Sample switch and
+// user chip; the hosted-example notice; and the footer disclaimer. No sidebar (see docs/DESIGN.md).
+import { Gauge, Inbox, Landmark, MessagesSquare, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { LogoMark } from '@/components/Brand';
 import { ModeChip } from '@/components/ModeChip';
 import { HOSTED_EXAMPLE } from '@/lib/hosted';
 
 const NAV = [
   { href: '/', label: 'Overview', icon: Gauge },
-  { href: '/queue', label: 'Complaint queue', icon: Inbox },
+  { href: '/queue', label: 'Queue', icon: Inbox },
   { href: '/themes', label: 'Emerging themes', icon: TrendingUp },
-  { href: '/regulatory', label: 'Regulatory view', icon: Landmark },
-  { href: '/ask', label: 'Ask the data', icon: MessagesSquare },
+  { href: '/regulatory', label: 'Regulatory', icon: Landmark },
+  { href: '/ask', label: 'Ask', icon: MessagesSquare },
 ];
+const REPO = 'https://github.com/sfc-gh-ooral/sfguide-complaints-intelligence';
 
 export default function Shell({ children }: { children: ReactNode }) {
-  const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  // Mobile drawer: Escape closes, focus moves into the drawer on open and back to the toggle on close.
-  const toggleRef = useRef<HTMLButtonElement>(null);
-  const closeRef = useRef<HTMLButtonElement>(null);
-  const wasOpen = useRef(false);
-  useEffect(() => {
-    if (open) closeRef.current?.focus();
-    else if (wasOpen.current) toggleRef.current?.focus();
-    wasOpen.current = open;
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [open]);
   const active = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href) || (href === '/queue' && pathname.startsWith('/complaint')));
 
   return (
-    <div className="min-h-screen flex">
-      <aside id="main-nav" className={`sidebar fixed inset-y-0 left-0 z-40 w-60 flex flex-col border-r md:translate-x-0 md:visible ${open ? 'translate-x-0 transition-transform' : '-translate-x-full invisible transition-[transform,visibility]'}`}
-        aria-label="Main navigation">
-        <div className="px-5 py-5 border-b flex items-center gap-3" style={{ borderColor: 'rgba(255,255,255,.08)' }}>
-          <div className="icon-tile w-9 h-9 rounded-xl flex items-center justify-center"><MessageSquareText className="w-4 h-4" aria-hidden /></div>
-          <div>
-            <div className="text-sm font-semibold leading-tight text-white">Complaints Intelligence</div>
-            <div className="text-[11px] muted">Northwind Bank · synthetic data</div>
-          </div>
-          <button ref={closeRef} className="md:hidden ml-auto btn !px-2" onClick={() => setOpen(false)} aria-label="Close menu"><X className="w-4 h-4" /></button>
+    <div className="min-h-screen flex flex-col">
+      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:z-[70] focus:m-2 btn">Skip to content</a>
+      {HOSTED_EXAMPLE && (
+        <div role="note" className="px-4 md:px-8 py-1.5 text-xs text-center" style={{ background: 'var(--brand)', color: 'var(--on-brand)' }}>
+          <strong>Sample data mode.</strong> Runs in your browser on synthetic data, no Snowflake account needed. AI answers were recorded from a live run.{' '}
+          <a href={REPO} className="underline underline-offset-2 font-semibold">Run it in your own account</a>
         </div>
-        <nav className="flex-1 px-3 py-3 space-y-1">
-          {NAV.map(({ href, label, icon: Icon }) => (
-            <Link key={href} href={href} onClick={() => setOpen(false)} aria-current={active(href) ? 'page' : undefined}
-              className="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium no-underline">
-              <Icon className="w-4 h-4" aria-hidden />{label}
-            </Link>
-          ))}
+      )}
+      <header className="topbar sticky top-0 z-40">
+        <div className="max-w-[1360px] mx-auto px-4 md:px-8 flex items-center gap-4 md:gap-8 min-h-[56px]">
+          <Link href="/" className="flex items-center gap-2.5 no-underline shrink-0" aria-label="Tallowmark Complaints Desk, overview">
+            <LogoMark />
+            <span className="leading-tight hidden sm:block"><span className="serif font-semibold text-[15px] block">Tallowmark</span><span className="text-[10.5px] muted block">Complaints Desk · Northwind Bank</span></span>
+          </Link>
+          <nav className="hidden lg:flex items-center gap-6 self-stretch" aria-label="Sections">
+            {NAV.map(({ href, label }) => <Link key={href} href={href} className="tab flex items-center" aria-current={active(href) ? 'page' : undefined}>{label}</Link>)}
+          </nav>
+          <div className="ml-auto flex items-center gap-2"><ModeChip /></div>
+          <div className="chip hidden md:inline-flex" title="Synthetic user">
+            <span className="avatar" aria-hidden>RC</span>
+            <span className="leading-tight"><span className="text-xs font-semibold block">Rina Castellano</span><span className="text-[10.5px] muted block">Complaints analyst</span></span>
+          </div>
+        </div>
+        <nav className="lg:hidden flex gap-5 overflow-x-auto no-scrollbar px-4 md:px-8 border-t" style={{ borderColor: 'var(--rule)' }} aria-label="Sections">
+          {NAV.map(({ href, label, icon: Icon }) => <Link key={href} href={href} className="tab flex items-center gap-1.5 !py-2.5" aria-current={active(href) ? 'page' : undefined}><Icon className="w-3.5 h-3.5" aria-hidden />{label}</Link>)}
         </nav>
-        <div className="px-4 py-4 border-t text-[11px] muted leading-relaxed" style={{ borderColor: 'rgba(255,255,255,.08)' }}>
-          Synthetic data. The taxonomy, flags, and response windows are illustrative, not an official regulator list. Not legal, regulatory, or compliance advice. AI output needs a person&apos;s review.
+      </header>
+      <main id="main" key={pathname} className="fade-up flex-1 w-full max-w-[1360px] mx-auto px-4 md:px-8 py-6">{children}</main>
+      <footer className="border-t text-[11px] muted" style={{ borderColor: 'var(--rule)' }}>
+        <div className="max-w-[1360px] mx-auto px-4 md:px-8 py-4 flex flex-wrap gap-x-6 gap-y-1">
+          <span>Tallowmark and Northwind Bank are fictional. Synthetic data only.</span>
+          <span>The taxonomy, flags and response windows are illustrative, not an official regulator list. Not legal, regulatory or compliance advice. AI output needs a person&apos;s review.</span>
         </div>
-      </aside>
-
-      <div className="flex-1 md:ml-60 min-w-0">
-        {HOSTED_EXAMPLE && (
-          <div role="note" className="px-4 md:px-8 py-2 text-xs border-b" style={{ background: 'var(--sample-soft)', borderColor: 'var(--border)', color: 'var(--text-2)' }}>
-            <strong style={{ color: 'var(--text)' }}>Sample data mode.</strong> Runs entirely in your browser on synthetic data; no Snowflake account needed. AI answers are recorded samples, not live Cortex output.{' '}
-            <a href="https://github.com/sfc-gh-ooral/sfguide-complaints-intelligence" className="underline underline-offset-2">Run it in your own account</a>
-          </div>
-        )}
-        <header className="glass sticky top-0 z-30 flex items-center gap-3 px-4 md:px-8 py-3 border-b" style={{ borderColor: 'var(--border)' }}>
-          <button ref={toggleRef} className="md:hidden btn !px-2" onClick={() => setOpen(true)} aria-label="Open menu" aria-expanded={open} aria-controls="main-nav"><Menu className="w-4 h-4" /></button>
-          <div className="min-w-0">
-            <div className="text-sm font-semibold truncate">Rina Castellano</div>
-            <div className="text-xs muted truncate">Complaints analyst, Consumer Banking</div>
-          </div>
-          <div className="ml-auto"><ModeChip /></div>
-        </header>
-        <main key={pathname} className="fade-up px-4 md:px-8 py-6 max-w-[1400px]">{children}</main>
-      </div>
-      {open && <div className="fixed inset-0 z-30 bg-black/40 md:hidden" onClick={() => setOpen(false)} aria-hidden />}
+      </footer>
     </div>
   );
 }

@@ -6,5 +6,5 @@ export const n = (x: number) => x.toLocaleString('en-US');
 export const pct = (x: number, digits = 1) => `${(x * 100).toFixed(digits)}%`;
 export const growthLabel = (g: number) => (g >= 0 ? `+${Math.round(g * 100).toLocaleString('en-US')}%` : `${Math.round(g * 100)}%`);
 export const dueLabel = (days: number, open: boolean) => (!open ? '—' : days < 0 ? `${-days}d overdue` : days === 0 ? 'Due today' : `${days}d left`);
-export const PRODUCT_COLORS: Record<string, string> = { Deposits: 'var(--chart-1)', 'Credit card': 'var(--chart-2)', Mortgage: 'var(--chart-3)', 'Auto loan': 'var(--chart-4)' };
-export const TIP = { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 } as const;
+export const PRODUCT_COLORS: Record<string, string> = { Deposits: 'var(--c1)', 'Credit card': 'var(--c2)', Mortgage: 'var(--c3)', 'Auto loan': 'var(--c4)' };
+export const TIP = { background: 'var(--paper)', border: '1px solid var(--rule)', borderRadius: 8, fontSize: 12 } as const;

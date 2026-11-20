@@ -31,6 +31,8 @@ export function ModeChip() {
 
   return (
     <>
+      <span className="pill hidden sm:inline-flex" style={live ? { color: 'var(--ok)', background: 'var(--ok-soft)' } : { color: 'var(--brand)', background: 'var(--brand-soft)' }}
+        title={live ? 'Reading your Snowflake account' : 'Bundled synthetic data'}>{live ? <><span className="live-dot" aria-hidden />LIVE · Snowflake</> : 'SAMPLE · synthetic'}</span>
       <div className={`mode-switch ${live ? 'is-live' : 'is-sample'}`} role="radiogroup" aria-label="Data source">
         <button role="radio" aria-checked={!live} onClick={() => choose('sample')}
           title="Bundled synthetic data; AI answers are scripted samples">
@@ -38,7 +40,7 @@ export function ModeChip() {
         </button>
         <button role="radio" aria-checked={live} onClick={() => choose('live')}
           title={configured ? 'Data and AI answers from your Snowflake account' : 'Needs a Snowflake connection'}>
-          {live && <span className="mode-dot" aria-hidden />}<Database className="w-3.5 h-3.5" aria-hidden />Live
+          <Database className="w-3.5 h-3.5" aria-hidden />Live
         </button>
       </div>
 
@@ -47,7 +49,7 @@ export function ModeChip() {
           <div role="dialog" aria-modal="true" aria-labelledby="live-help-title" className="card fade-up max-w-lg w-full p-5"
             onClick={(e) => e.stopPropagation()}>
             <div className="flex items-start justify-between gap-3 mb-3">
-              <h2 id="live-help-title" className="text-base font-semibold">Connect Snowflake to use Live mode</h2>
+              <h2 id="live-help-title" className="serif text-lg font-semibold">Connect Snowflake to use Live mode</h2>
               <button className="btn !px-2" onClick={() => setHelp(false)} aria-label="Close"><X className="w-4 h-4" /></button>
             </div>
             {HOSTED_EXAMPLE ? (
@@ -63,7 +65,7 @@ export function ModeChip() {
                   <li>Create a key pair and register the public key on your user (steps in <code>.env.example</code>).</li>
                   <li>Copy <code>.env.example</code> to <code>.env.local</code> and fill in:</li>
                 </ol>
-                <pre className="text-xs rounded-lg p-3 mb-3 overflow-x-auto" style={{ background: 'var(--surface-2)' }}>{`SNOWFLAKE_ACCOUNT=<orgname>-<account_name>
+                <pre className="text-xs rounded-lg p-3 mb-3 overflow-x-auto" style={{ background: 'var(--paper-2)' }}>{`SNOWFLAKE_ACCOUNT=<orgname>-<account_name>
 SNOWFLAKE_USERNAME=<YOUR_USER>
 SNOWFLAKE_PRIVATE_KEY_PATH=/absolute/path/to/ci_rsa_key.p8`}</pre>
                 <p className="text-sm text-2">Then restart with <code>npm run dev</code> and switch to Live.{' '}
