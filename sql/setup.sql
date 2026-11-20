@@ -3,8 +3,12 @@
 -- Synthetic data only (fictional "Northwind Bank"). The taxonomy, regulatory flags, and response
 -- windows are illustrative, not an official regulator list. Not legal, regulatory, or compliance advice.
 --
--- Run top to bottom in a Snowsight SQL worksheet (about 12 minutes on an XSMALL warehouse; most of it
+-- Run top to bottom in a Snowsight SQL worksheet (about 3 minutes on an XSMALL warehouse; most of it
 -- is the first refresh of the AI classification Dynamic Table over 40,141 complaints).
+--
+-- COST: that first refresh used about 51 AI credits per run in our tests (AI_CLASSIFY about 42.5,
+-- AI_SENTIMENT about 8.5). To try it for less, add a filter such as WHERE received_date >= '2026-11-02'
+-- to the COMPLAINT_AI definition below. See the README for measured costs.
 -- Requirements (see README): Cortex AI functions AI_CLASSIFY, AI_SENTIMENT, AI_EMBED, AI_AGG,
 -- AI_REDACT, and AI_COMPLETE (llama3.3-70b) in your region or with cross-region inference, Cortex
 -- Agents, and a role that can create roles, warehouses, databases, and API integrations.

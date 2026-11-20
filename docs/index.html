@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="snowflake-source" content="cortex-agent-authored">
+<title>Complaints Intelligence: a Snowflake example</title>
+<meta name="description" content="Classify every complaint across channels, spot emerging conduct-risk themes early, and evidence timely resolution. A Snowflake example on synthetic data.">
+<script type="application/json" id="snowflake-report-metadata">
+{
+  "generated": "2026-11-20",
+  "intent": "GitHub Pages guide for the Complaints Intelligence: a Snowflake example",
+  "dataSources": [
+    { "type": "file", "path": "docs/images/*.png" },
+    { "type": "file", "path": "sql/setup.sql" }
+  ],
+  "sections": [
+    { "id": "problem", "title": "The problem", "producerNotes": "Static copy from the build brief" },
+    { "id": "walkthrough", "title": "Walkthrough", "dataSources": [{ "type": "file", "path": "docs/images/*.png" }], "producerNotes": "Screenshots of the running app in no-account mode; recapture when the UI changes" },
+    { "id": "how-it-works", "title": "How it works", "dataSources": [{ "type": "file", "path": "sql/setup.sql" }], "producerNotes": "Capabilities verified in live mode on 2026-11-20" },
+    { "id": "get-started", "title": "Get started", "producerNotes": "Mirrors README quick start and live steps" },
+    { "id": "limits", "title": "Limits and disclaimer", "producerNotes": "Mirrors README known limitations" }
+  ]
+}
+</script>
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: light-dark(#f6f7fb, #0d1220);
+  --card: light-dark(#ffffff, #141b2d);
+  --card-2: light-dark(#f0f2f8, #1b2439);
+  --border: light-dark(#dde1ec, #2a3550);
+  --text: light-dark(#141a2e, #e8ecf6);
+  --text-2: light-dark(#4a5373, #aab3cc);
+  --muted: light-dark(#6b7493, #8590ad);
+  --accent: light-dark(#1a6fd1, #5aa7f5);
+  --accent-soft: light-dark(rgba(26,111,209,.1), rgba(90,167,245,.14));
+  --warn-soft: light-dark(#fff6e6, #2b2414);
+  --warn-border: light-dark(#f0c36d, #6b5420);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); }
+img, svg { max-width: 100%; height: auto; }
+.wrap { max-width: 1080px; width: 100%; margin: 0 auto; padding: 0 clamp(16px, 4vw, 28px); }
+header.top { border-bottom: 1px solid var(--border); background: var(--card); }
+header.top .wrap { display: flex; align-items: center; gap: 12px; padding-top: 14px; padding-bottom: 14px; flex-wrap: wrap; }
+.mark { width: 30px; height: 30px; border-radius: 8px; background: var(--accent); display: grid; place-items: center; }
+.brand { font-weight: 650; }
+.brand small { display: block; color: var(--muted); font-weight: 400; font-size: 12px; }
+nav.links { margin-left: auto; display: flex; gap: 16px; flex-wrap: wrap; font-size: 14px; }
+nav.links a { text-decoration: none; color: var(--text-2); }
+nav.links a:hover { color: var(--accent); }
+.hero { padding-top: clamp(36px, 7vw, 72px); padding-bottom: 28px; }
+.eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+h1 { font-size: clamp(30px, 5vw, 46px); line-height: 1.15; margin: 10px 0 16px; letter-spacing: -.01em; }
+.lede { font-size: clamp(17px, 2.2vw, 19px); color: var(--text-2); max-width: 760px; margin: 0 0 24px; }
+.cta { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 26px; }
+.btn { display: inline-block; padding: 10px 16px; border-radius: 9px; border: 1px solid var(--border); background: var(--card); color: var(--text); text-decoration: none; font-weight: 600; font-size: 15px; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.fact { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 14px; }
+.fact b { display: block; font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.note { background: var(--warn-soft); border: 1px solid var(--warn-border); border-radius: 10px; padding: 12px 16px; font-size: 14px; margin: 22px 0 0; }
+section { padding: 44px 0; border-top: 1px solid var(--border); }
+h2 { font-size: clamp(24px, 3.4vw, 30px); margin: 0 0 10px; }
+h3 { font-size: 18px; margin: 0 0 6px; }
+.sub { color: var(--text-2); max-width: 760px; margin: 0 0 24px; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+.card p { margin: 0; color: var(--text-2); font-size: 15px; }
+figure { margin: 0 0 34px; }
+figure img { display: block; width: 100%; border: 1px solid var(--border); border-radius: 12px; background: var(--card); }
+figcaption { margin-top: 10px; font-size: 15px; color: var(--text-2); }
+figcaption .cap { display: inline-block; font-size: 12px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 1px 9px; margin-right: 6px; }
+.step { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px; align-items: start; }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { background: var(--card-2); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+code, pre { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; }
+code { background: var(--card-2); padding: 1px 5px; border-radius: 4px; }
+pre { background: var(--card-2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; overflow-x: auto; margin: 0 0 14px; }
+pre code { background: none; padding: 0; }
+ul { padding-left: 20px; }
+li { margin: 4px 0; }
+footer { border-top: 1px solid var(--border); padding: 28px 0 44px; color: var(--muted); font-size: 14px; }
+@media (max-width: 560px) { nav.links { margin-left: 0; width: 100%; gap: 12px; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="mark" aria-hidden="true">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </div>
+    <div class="brand">Complaints Intelligence<small>A Snowflake example on synthetic data</small></div>
+    <nav class="links" aria-label="Page sections">
+      <a href="#walkthrough">Walkthrough</a>
+      <a href="#how-it-works">How it works</a>
+      <a href="#get-started">Get started</a>
+      <a href="https://github.com/sfc-gh-ooral/sfguide-complaints-intelligence">Repository</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap hero" id="problem">
+  <div class="eyebrow">Banking · Compliance</div>
+  <h1>Classify every complaint and see conduct risk while it's still emerging</h1>
+  <p class="lede">Complaints arrive as call notes, emails, branch notes, social posts, and regulator portal submissions. Teams tag them by hand, find spikes weeks late, and miss the few that need fair-lending review or are about to breach a response deadline. This example classifies every complaint as it lands with Snowflake Cortex AI functions in a Dynamic Table, flags UDAAP (unfair, deceptive, or abusive acts or practices), fair-lending, and servicing risk, masks PII, surfaces fast-growing themes with an AI summary of the root cause, finds repeat complaints across channels, and logs every decision as evidence.</p>
+  <div class="cta">
+    <a class="btn primary" href="try/">Try the example in your browser</a>
+    <a class="btn" href="https://github.com/sfc-gh-ooral/sfguide-complaints-intelligence">View the repository</a>
+  </div>
+  <div class="facts">
+    <div class="fact"><b>No-account mode</b>Runs in the browser on synthetic data; nothing to install</div>
+    <div class="fact"><b>Live mode</b>Cortex AI functions, Dynamic Tables, Cortex Agents; Standard Edition or higher</div>
+    <div class="fact"><b>Setup time</b>About 3 minutes in one Snowsight worksheet, classifying 40,141 complaints</div>
+    <div class="fact"><b>Cost</b>About 51 AI credits per setup run to classify 40,141 complaints (measured), plus about 0.05 warehouse credits; app actions are small</div>
+  </div>
+  <p class="note"><strong>Synthetic data, illustrative logic.</strong> Northwind Bank and every person in it are fictional. The taxonomy, regulator-style mapping, flags, and response window are illustrative, not an official regulator list. This is not legal, regulatory, or compliance advice, and AI output needs a person's review.</p>
+</div>
+
+<section>
+  <div class="wrap">
+    <h2>Who it's for</h2>
+    <div class="grid3">
+      <div class="card"><h3>Complaints analysts</h3><p>A queue with saved views for fair-lending review, deadlines, and duplicates; masked text, AI category and flags, and a response draft to edit.</p></div>
+      <div class="card"><h3>Complaints managers</h3><p>Volume by product and channel, the high-risk share, on-time resolution, aging, and themes that are growing fastest.</p></div>
+      <div class="card"><h3>Compliance and product owners</h3><p>A regulator-style roll-up with export, root-cause issues for owners, and a log of every decision with the person who made it.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="walkthrough">
+  <div class="wrap">
+    <h2>Walkthrough</h2>
+    <p class="sub">Screens from the no-account example. Numbers are planted stories on this synthetic data set.</p>
+    <figure>
+      <img src="images/01-overview.png" alt="Overview: 40,141 complaints, 41.0 percent flagged high-risk, 94.0 percent resolved on time, 1,231 due in three days, a weekly stacked bar chart by product with a deposits jump in week 3, regulatory flag counts, volume by channel, and aging of open complaints" loading="lazy">
+      <figcaption>Overview. Every complaint is classified as it lands by AI_CLASSIFY in an incremental Dynamic Table, so volume, high-risk share, on-time rate, and aging are current.</figcaption>
+    </figure>
+    <figure>
+      <img src="images/02-themes.png" alt="Emerging themes: Overdraft or NSF fee on deposits ranked first with a +1,010 percent rise in week 3 from 86 to 955 complaints, a table of themes with sparklines, and an AI summary naming the mobile app update version 7.2 with masked example quotes and an open-issue form" loading="lazy">
+      <figcaption>Emerging themes. Overdraft complaints jump in week 3; AI_AGG summarizes the peak week and names the app update, AI_REDACT masks the quotes, and the manager opens an issue for the owner.</figcaption>
+    </figure>
+    <figure>
+      <img src="images/03-queue.png" alt="Complaint queue on the Fair-lending review view: 27 complaints, mostly auto loan and mortgage application denials, each tagged Fair lending, with sentiment, status, and due date" loading="lazy">
+      <figcaption>Work queue. AI_CLASSIFY multi-label flags route allegations of discrimination to a fair-lending review view, alongside views for deadlines, overdue, duplicates, and UDAAP.</figcaption>
+    </figure>
+    <figure>
+      <img src="images/04-complaint.png" alt="Complaint detail for C-039995: a fair-lending warning, the call text with the email address masked as [EMAIL], AI category Applying for credit and subcategory Application denied, a Fair lending flag, negative sentiment, a response draft labeled AI draft needs review, and route and resolve actions" loading="lazy">
+      <figcaption>Complaint detail. AI_REDACT masks PII, AI_CLASSIFY and AI_SENTIMENT label the complaint, and AI_COMPLETE drafts a response that a person edits; routing and resolving need a note.</figcaption>
+    </figure>
+    <figure>
+      <img src="images/05-duplicate.png" alt="Complaint detail for C-040088 about an unauthorized debit card charge, with a Same customer table listing C-040086 from the regulator portal and C-040087 from a call, scored 0.82 and 0.75 as likely duplicates" loading="lazy">
+      <figcaption>Duplicates. AI_EMBED vectors and VECTOR_COSINE_SIMILARITY find the same customer reporting the same problem through three channels.</figcaption>
+    </figure>
+    <figure>
+      <img src="images/06-regulatory.png" alt="Regulatory view: AI subcategories grouped under regulator-style products such as Checking or savings account and Credit card, with regulator issue, complaints, open, high-risk, and on-time rate columns, an Export CSV button, and the activity log" loading="lazy">
+      <figcaption>Regulatory view. The AI taxonomy rolls up to a regulator-style product and issue list for export, with an activity log of every decision as evidence.</figcaption>
+    </figure>
+    <figure>
+      <img src="images/07-ask.png" alt="Ask the data: the question which subcategories grew most from week 2 to week 3, answered that overdraft or NSF fee complaints rose from 86 to 955, with a table of changes by subcategory" loading="lazy">
+      <figcaption>Ask the data. A Cortex Agent answers with SQL that Cortex Analyst generates over a semantic view of the classified complaints.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="how-it-works">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <p class="sub">Each capability below ran in live mode on a Snowflake account in November 2026.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Step</th><th>Snowflake capability</th><th>What it does here</th></tr></thead>
+        <tbody>
+          <tr><td>Continuous classification</td><td><a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-about">Dynamic Tables</a> with <a href="https://docs.snowflake.com/en/sql-reference/functions/ai_classify">AI_CLASSIFY</a></td><td>COMPLAINT_AI refreshes incrementally, so each new complaint gets a subcategory from a 20-label taxonomy and multi-label UDAAP, fair-lending, and servicing flags.</td></tr>
+          <tr><td>Sentiment</td><td><a href="https://docs.snowflake.com/en/sql-reference/functions/ai_sentiment">AI_SENTIMENT</a></td><td>Overall sentiment per complaint, in the same Dynamic Table.</td></tr>
+          <tr><td>Duplicates</td><td><a href="https://docs.snowflake.com/en/sql-reference/functions/ai_embed">AI_EMBED</a> and VECTOR_COSINE_SIMILARITY</td><td>Embeddings per complaint; a second Dynamic Table pairs complaints from the same customer and subcategory within 14 days.</td></tr>
+          <tr><td>PII masking</td><td><a href="https://docs.snowflake.com/en/sql-reference/functions/ai_redact">AI_REDACT</a></td><td>Replaces names, phone numbers, emails, and ages with placeholders before an analyst reads the text or a quote is shown.</td></tr>
+          <tr><td>Theme root cause</td><td><a href="https://docs.snowflake.com/en/sql-reference/functions/ai_agg">AI_AGG</a></td><td>Summarizes every complaint in a theme's peak week into the common cause.</td></tr>
+          <tr><td>Response drafts</td><td><a href="https://docs.snowflake.com/en/sql-reference/functions/ai_complete">AI_COMPLETE</a></td><td>Drafts a first response from the masked text, category, and due date for a person to edit.</td></tr>
+          <tr><td>Questions</td><td><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents">Cortex Agents</a> and Cortex Analyst</td><td>An agent answers questions with SQL generated over a semantic view of the classified complaints.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="get-started">
+  <div class="wrap">
+    <h2>Get started</h2>
+    <div class="two">
+      <div>
+        <h3>No account</h3>
+        <p class="sub" style="margin-bottom:12px">Open the <a href="try/">hosted example</a>, or run it locally with Node.js 20.19 or later:</p>
+<pre><code>git clone https://github.com/sfc-gh-ooral/sfguide-complaints-intelligence.git
+cd sfguide-complaints-intelligence
+npm install
+npm run dev</code></pre>
+        <p class="sub">AI output in this mode was recorded from a live run and is labeled <strong>Sample AI response</strong>.</p>
+      </div>
+      <div>
+        <h3>Your Snowflake account</h3>
+        <ol>
+          <li>Run <a href="https://github.com/sfc-gh-ooral/sfguide-complaints-intelligence/blob/main/sql/setup.sql"><code>sql/setup.sql</code></a> in a Snowsight worksheet. It creates a dedicated database, an XSMALL warehouse, and a least-privilege role, loads the synthetic data from the repository, and classifies every complaint.</li>
+          <li>Register a key pair for your user and copy <code>.env.example</code> to <code>.env.local</code>.</li>
+          <li>Run <code>npm run dev</code> and switch to Live. Each screen shows the live role and measured latency.</li>
+          <li>When you're done, run <code>sql/cleanup.sql</code>.</li>
+        </ol>
+        <p class="sub">The README lists every object created, the expected cost, and the full steps.</p>
+      </div>
+    </div>
+    <h3 style="margin-top:20px">Customize with Cortex Code</h3>
+    <ul>
+      <li>"Replace the taxonomy with mine and re-classify; show the categories where AI and my analysts' tags disagree most."</li>
+      <li>"Alert me when any theme grows more than 50% week over week."</li>
+      <li>"Map my complaint tables to SRC.COMPLAINTS and propose access so analysts only see masked text."</li>
+    </ul>
+  </div>
+</section>
+
+<section id="limits">
+  <div class="wrap">
+    <h2>Limits and disclaimer</h2>
+    <ul>
+      <li>The taxonomy, regulator-style mapping, flags, and 15-day response window are illustrative.</li>
+      <li>Results such as "955 overdraft complaints in week 3" and "27 flagged for fair-lending review" are planted stories on this synthetic data set.</li>
+      <li>AI classification and masking are best-effort suggestions; review them. Drafts are never sent.</li>
+      <li>Latency depends on your account, region, model, and warehouse. The app shows measured times in live mode only.</li>
+    </ul>
+    <p class="note">This is an illustrative example provided as is. It is not an official Snowflake product, it isn't supported by Snowflake Support, and it contains no customer data. Not legal, regulatory, or compliance advice. Apache 2.0 license.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">Owner: Oz Oral · Last reviewed: November 2026 · <a href="https://github.com/sfc-gh-ooral/sfguide-complaints-intelligence">Repository</a> · <a href="https://docs.snowflake.com/">Snowflake documentation</a></div>
+</footer>
+</body>
+</html>
