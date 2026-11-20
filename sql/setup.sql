@@ -80,7 +80,7 @@ COPY INTO REGULATOR_PRODUCTS FROM @CI_DATA/regulator_products.csv FILE_FORMAT = 
 USE SCHEMA CI;
 -- The business clock is frozen so deadlines and aging match the bundled sample.
 CREATE OR REPLACE TABLE CONFIG (as_of DATE, window_start DATE, due_days NUMBER, duplicate_threshold FLOAT);
-INSERT INTO CONFIG VALUES ('2026-11-16', '2026-10-05', 15, 0.9);
+INSERT INTO CONFIG VALUES ('2026-11-16', '2026-10-05', 15, 0.55);
 
 -- New complaints are classified as they land. Only the immutable text is read, so status updates in
 -- the workflow tables never trigger re-classification. To use your own taxonomy, edit the label list.
@@ -94,7 +94,7 @@ SELECT complaint_id,
      'Unauthorized transaction', 'Account closed unexpectedly', 'Interest rate or APR', 'Late fee', 'Purchase dispute',
      'Rewards not credited', 'Credit limit decrease', 'Credit reporting error', 'Escrow analysis or shortage',
      'Payment not applied', 'Hardship or modification', 'Application denied', 'Closing costs or fees at origination',
-     'Repossession', 'Add-on product refund', 'Customer service'],
+     'Repossession', {'label': 'Add-on product refund', 'description': 'refund of GAP or another add-on product after an auto loan is paid off early'}, 'Customer service'],
     {'task_description': 'Classify a bank customer complaint by its main issue.'}):labels[0]::VARCHAR AS subcategory,
   AI_CLASSIFY(complaint_text,
     [{'label': 'UDAAP', 'description': 'possible unfair, deceptive, or abusive practice: unexpected fees, misleading balances or terms, charges not agreed to'},
@@ -105,10 +105,12 @@ SELECT complaint_id,
   AI_EMBED('snowflake-arctic-embed-m-v1.5', complaint_text) AS embedding
 FROM COMPLAINTS_INTEL_DEMO.SRC.COMPLAINTS;
 
--- Likely duplicates: the same customer, within 14 days, with near-identical meaning (AI_EMBED vectors).
+-- Likely duplicates: the same customer and AI subcategory within 14 days, with similar meaning (AI_EMBED
+-- vectors). Channel framing (call scripts, social posts) lowers similarity, so the floor is 0.55; on this
+-- synthetic data that finds the planted repeats and no unrelated pairs. Tune it for your data.
 CREATE OR REPLACE DYNAMIC TABLE DUPLICATE_PAIRS
   TARGET_LAG = '1 hour' WAREHOUSE = CI_WH
-  COMMENT = 'Pairs of complaints from one customer whose embeddings are at least 0.9 cosine similar'
+  COMMENT = 'Pairs of complaints from one customer with the same AI subcategory and cosine similarity of at least 0.55'
 AS
 SELECT a.complaint_id AS complaint_id, b.complaint_id AS duplicate_of, a.customer_id,
   ROUND(VECTOR_COSINE_SIMILARITY(ea.embedding, eb.embedding), 3) AS similarity
@@ -116,8 +118,8 @@ FROM COMPLAINTS_INTEL_DEMO.SRC.COMPLAINTS a
 JOIN COMPLAINTS_INTEL_DEMO.SRC.COMPLAINTS b
   ON a.customer_id = b.customer_id AND a.complaint_id > b.complaint_id AND ABS(DATEDIFF(day, a.received_date, b.received_date)) <= 14
 JOIN COMPLAINT_AI ea ON ea.complaint_id = a.complaint_id
-JOIN COMPLAINT_AI eb ON eb.complaint_id = b.complaint_id
-WHERE VECTOR_COSINE_SIMILARITY(ea.embedding, eb.embedding) >= 0.9;
+JOIN COMPLAINT_AI eb ON eb.complaint_id = b.complaint_id AND eb.subcategory = ea.subcategory
+WHERE VECTOR_COSINE_SIMILARITY(ea.embedding, eb.embedding) >= 0.55;
 
 -- 2c. Workflow tables (people make every decision) -----------------------------------
 CREATE OR REPLACE TABLE CASE_UPDATES (complaint_id VARCHAR, status VARCHAR, resolution VARCHAR, routed_to VARCHAR,
