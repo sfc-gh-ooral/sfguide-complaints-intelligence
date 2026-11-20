@@ -31,7 +31,7 @@ Northwind Bank. The brand, palette and layout are described in [docs/DESIGN.md](
 **Stories on this synthetic data set** (details in [data/README.md](data/README.md)):
 
 1. **Overdraft fees after an app update.** Overdraft or NSF fee complaints on deposits rise from 86 in
-   week 2 to 955 in week 3. The `AI_AGG` summary names the mobile app update (version 7.2) and its
+   week 2 to 957 in week 3. The `AI_AGG` summary names the mobile app update (version 7.2) and its
    balance display as the common cause, and the manager opens an issue for Digital Banking.
 2. **Fair-lending allegations.** 27 complaints allege discrimination (age, sex, national origin,
    disability, public assistance, redlining). `AI_CLASSIFY` flags all 27 for fair-lending review on
@@ -39,8 +39,8 @@ Northwind Bank. The brand, palette and layout are described in [docs/DESIGN.md](
 3. **Escrow deadlines.** 66 open mortgage escrow complaints are due within three days of the business
    date, 24% of that theme's open complaints, the highest share of any theme.
 4. **The same customer, several channels.** `AI_EMBED` similarity within the same customer and AI
-   subcategory finds 68 pairs of repeat complaints sent through different channels, and no unrelated
-   pairs on this data set.
+   subcategory flags 55 complaints as repeats of an earlier complaint from the same customer, sent
+   through different channels (the Duplicates view on this data set).
 
 ## Snowflake capabilities used (all run in Live mode)
 

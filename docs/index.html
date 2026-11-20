@@ -150,11 +150,11 @@ footer { border-top: 1px solid var(--rule); padding: 28px 0 44px; color: var(--m
     <h2>Walkthrough</h2>
     <p class="sub">Screens from the no-account example. Numbers are planted stories on this synthetic data set.</p>
     <figure>
-      <img src="images/01-overview.png" alt="Overview: KPI tiles for 40,141 complaints, 41.0 percent flagged high-risk, 94.0 percent resolved on time and 1,231 due in three days with 1,425 overdue, an emerging-theme alert for overdraft fees, a stacked weekly area chart by product with an app-update marker at week 3, and regulatory flag bars" loading="lazy">
+      <img src="images/01-overview.png" alt="Overview: KPI tiles for 40,141 complaints, 41.2 percent flagged high-risk, 94.0 percent resolved on time and 1,231 due in three days with 1,426 overdue, an emerging-theme alert for overdraft fees, a stacked weekly area chart by product with an app-update marker at week 3, and regulatory flag bars" loading="lazy">
       <figcaption>Overview. Every complaint is classified as it lands by AI_CLASSIFY in an incremental Dynamic Table, so volume, high-risk share, on-time rate, and aging are current.</figcaption>
     </figure>
     <figure>
-      <img src="images/02-themes.png" alt="Emerging themes: a six-week heatmap of themes with Overdraft or NSF fee on deposits peaking at 955 complaints in week 3, and a side panel with a weekly bar chart, an AI root-cause summary naming the mobile app update, three cited and masked example complaints, and an open-issue form" loading="lazy">
+      <img src="images/02-themes.png" alt="Emerging themes: a six-week heatmap of themes with Overdraft or NSF fee on deposits peaking at 957 complaints in week 3, and a side panel with a weekly bar chart, an AI root-cause summary naming the mobile app update, three cited and masked example complaints, and an open-issue form" loading="lazy">
       <figcaption>Emerging themes. A heatmap shows six weeks at once and overdraft complaints jump in week 3; AI_AGG summarizes the peak week and names the app update, AI_REDACT masks the quotes, and the manager opens an issue for the owner.</figcaption>
     </figure>
     <figure>
@@ -174,7 +174,7 @@ footer { border-top: 1px solid var(--rule); padding: 28px 0 44px; color: var(--m
       <figcaption>Regulatory view. The AI taxonomy rolls up to a regulator-style product and issue list for export, with an activity log of every decision as evidence.</figcaption>
     </figure>
     <figure>
-      <img src="images/07-ask.png" alt="Ask the complaints data: the question which subcategories grew most from week 2 to week 3, answered that overdraft or NSF fee complaints rose from 86 to 955, with a table of changes and the COMPLAINTS_SV semantic view cited as the source" loading="lazy">
+      <img src="images/07-ask.png" alt="Ask the complaints data: the question which subcategories grew most from week 2 to week 3, answered that overdraft or NSF fee complaints rose from 86 to 957, with a table of changes and the COMPLAINTS_SV semantic view cited as the source" loading="lazy">
       <figcaption>Ask the data. A Cortex Agent answers, citing the semantic view, with SQL that Cortex Analyst generates over a semantic view of the classified complaints.</figcaption>
     </figure>
   </div>
@@ -239,7 +239,7 @@ npm run dev</code></pre>
     <h2>Limits and disclaimer</h2>
     <ul>
       <li>The taxonomy, regulator-style mapping, flags, and 15-day response window are illustrative.</li>
-      <li>Results such as "955 overdraft complaints in week 3" and "27 flagged for fair-lending review" are planted stories on this synthetic data set.</li>
+      <li>Results such as "957 overdraft complaints in week 3" and "27 flagged for fair-lending review" are planted stories on this synthetic data set.</li>
       <li>AI classification and masking are best-effort suggestions; review them. Drafts are never sent.</li>
       <li>Latency depends on your account, region, model, and warehouse. The app shows measured times in live mode only.</li>
     </ul>

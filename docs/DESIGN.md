@@ -9,7 +9,18 @@ Northwind Bank. All data is synthetic.
   counts and reads every complaint so the pattern shows before it becomes a finding.
 - **Logo mark:** four upright strokes crossed by a fifth diagonal stroke (a tally of five) inside a
   rounded square, burgundy on light, rose on dark. It is inline SVG in `components/Brand.tsx` and in
-  `docs/index.html`.
+  `docs/index.html`; the light-mode mark is:
+
+```svg
+<svg width="32" height="32" viewBox="0 0 32 32" role="img" aria-label="Tallowmark" xmlns="http://www.w3.org/2000/svg">
+  <rect x="1" y="1" width="30" height="30" rx="8" fill="#8C1D40"/>
+  <g stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round">
+    <path d="M9 9v14M13.5 9v14M18 9v14M22.5 9v14"/>
+    <path d="M6.5 20.5 25 11"/>
+  </g>
+</svg>
+```
+
 - **Voice:** calm, exact, regulator-literate. Short sentences, numbers first, no hype. Labels say
   what a thing is ("Response due in 3 days"), never what it might feel like.
 - **Audience:** complaints analysts, complaints management leads, and second-line compliance.
@@ -56,6 +67,17 @@ meet WCAG AA (4.5:1) on `--paper`; the burgundy and teal were picked darker than
   thin "case reference" line (business date, record count, source), and the Snowflake capability chips.
 - Content sits in a 12-column grid, max 1360 px. Density is medium-high: 13 px tables, 8 px row padding.
 - The queue opens complaints in a **right-hand drawer** (quick view) with a link to the full case file.
+
+### Density
+
+Medium-high, tuned for analysts who scan hundreds of rows a day (values from `app/globals.css`):
+
+- Tables (`table.ledger`): 13 px text, 9 px × 10 px cell padding, 10.5 px uppercase headers,
+  tabular numerals, hover and selected rows marked with a 3 px burgundy left rule.
+- Cards: 10 px radius, 14–16 px padding; KPI tiles 14 × 16 px padding with 30 px serif values.
+- Controls: 13 px buttons and inputs with 6–7 px vertical padding; 12 px segmented toggles.
+- Page: max width 1360 px, 16 px side padding on phones and 32 px on desktop. At 390 px the grid
+  collapses to one column and wide tables scroll inside their card.
 
 ### Charts
 

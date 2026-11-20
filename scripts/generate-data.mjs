@@ -1,4 +1,4 @@
-// Generates the synthetic complaints for this example: data/complaints.csv and data/taxonomy.csv.
+// Generates the synthetic data for this example: data/complaints.csv, data/taxonomy.csv and data/regulator_products.csv.
 // Deterministic (seeded): every run writes the same rows, so screenshots match what readers get.
 //   node scripts/generate-data.mjs
 // Fictional bank "Northwind Bank". Names, phone numbers (555-01xx) and emails (example.com) are invented.

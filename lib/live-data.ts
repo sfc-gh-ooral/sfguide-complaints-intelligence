@@ -83,7 +83,7 @@ export const liveData: CiData = {
   },
 
   async queue(view, product) {
-    if (!(view in VIEWS)) throw new Error('Unknown view');
+    if (!Object.hasOwn(VIEWS, view)) throw new Error('Unknown view');
     const p = (PRODUCTS as readonly string[]).includes(product) ? product : 'All';
     const where = `${VIEW_SQL[view]} AND (? = 'All' OR product = ?)`;
     const [[rows, total], ms] = await timed(() => Promise.all([
