@@ -16,14 +16,17 @@ discrimination in credit decisions.
 
 ## What it does
 
+The app is styled as **Tallowmark Complaints Desk**, a fictional product used by the fictional
+Northwind Bank. The brand, palette and layout are described in [docs/DESIGN.md](docs/DESIGN.md).
+
 | Screen | For | What you see |
 | --- | --- | --- |
 | Overview | Complaints manager | Weekly volume by product, volume and high-risk share by channel, regulatory flags, on-time resolution rate, aging of open complaints, and where the next three days' deadlines sit |
-| Complaint queue | Complaints analyst | Saved views: all open, fair-lending review, due in 3 days, overdue, likely duplicates, UDAAP flagged, filtered by product |
+| Complaint queue | Complaints analyst | Saved views: all open, fair-lending review, due in 3 days, overdue, likely duplicates, UDAAP flagged, filtered by product and free text, with sortable columns and a quick-view drawer for each complaint |
 | Complaint detail | Complaints analyst | The text with PII masked by `AI_REDACT`, AI category and subcategory, regulatory flags, sentiment, deadline, other complaints from the same customer with their similarity, a labeled AI response draft, and route, resolve, or link-as-duplicate actions with a required note |
-| Emerging themes | Complaints manager, product owners | AI subcategory by product, ranked by the sharpest week-over-week rise; an `AI_AGG` root-cause summary with masked example quotes; open an issue for the root-cause owner |
+| Emerging themes | Complaints manager, product owners | AI subcategory by product, ranked by the sharpest week-over-week rise, shown as a six-week heatmap; a streamed `AI_AGG` root-cause summary that cites masked example quotes; open an issue for the root-cause owner |
 | Regulatory view | Compliance | The internal taxonomy rolled up to a regulator-style product and issue list, with CSV export, and the activity log of every decision |
-| Ask the data | Anyone on the team | Questions answered by a Cortex Agent that writes SQL with Cortex Analyst over a semantic view |
+| Ask the data | Anyone on the team | Questions answered by a Cortex Agent that writes SQL with Cortex Analyst over a semantic view; the answer streams in and cites the semantic view and its SQL |
 
 **Stories on this synthetic data set** (details in [data/README.md](data/README.md)):
 
@@ -84,7 +87,7 @@ session. Sample mode covers the complaints that appear in the saved views; Live 
 ## Live mode: deploy to your account
 
 1. Open `sql/setup.sql` in a Snowsight SQL worksheet and **Run All** as a user with ACCOUNTADMIN.
-   It took 169 to 174 seconds on the XSMALL warehouse it creates.
+   It took 169 to 200 seconds on the XSMALL warehouse it creates (200 seconds on the November 20, 2026 run).
 2. Create a key pair and register the public key on your user (commands in `.env.example`).
 3. `cp .env.example .env.local` and fill in your account identifier, user, and key path.
 4. `npm run dev`, then switch the header to **Live**. Every screen now reads Snowflake as
@@ -117,15 +120,16 @@ Measured on an AWS US account (November 2026). **Most of the cost is the first c
 
 | Step | Time | AI credits (measured) |
 | --- | --- | --- |
-| `setup.sql`, top to bottom | 169 to 174 seconds | about 51 per run: `AI_CLASSIFY` (two calls per complaint) about 42.5, `AI_SENTIMENT` about 8.5, `AI_EMBED` about 0.04 |
+| `setup.sql`, top to bottom | 169 to 200 seconds | about 51 per run: `AI_CLASSIFY` (two calls per complaint) about 42.5, `AI_SENTIMENT` about 8.5, `AI_EMBED` about 0.04 |
 | Screen loads in Live mode | 0.2 to 3.4 seconds (first call opens the connection) | none |
 | Mask one complaint (`AI_REDACT`) | about 4.9 seconds | about 0.0004 per complaint (0.16 for 360) |
 | Response draft (`AI_COMPLETE`, `llama3.3-70b`) | 4.0 to 4.5 seconds | about 0.0001 per draft (0.04 for 348) |
 | Theme summary (`AI_AGG`) and three masked quotes | 7.4 to 15.5 seconds | about 0.03 per theme |
-| Agent question (Cortex Agents + Cortex Analyst) | 12 to 24 seconds | billed separately by Cortex Agents; not measured here |
+| Agent question (Cortex Agents + Cortex Analyst) | 12 to 29 seconds | billed separately by Cortex Agents; not measured here |
 
-Warehouse time for setup is about 3 minutes of XSMALL, roughly 0.05 credits (estimated from measured
-time). AI credit prices vary by region and contract, so check yours before running setup. To try it
+Warehouse credits measured on the November 20, 2026 run: 0.48 for `setup.sql` plus about 20 minutes of
+Live use of every screen (WAREHOUSE_METERING_HISTORY for CI_WH). The AI credit figures above come from
+the first live run; AI credits for the second run weren't attributable yet when it was cleaned up. AI credit prices vary by region and contract, so check yours before running setup. To try it
 for less, keep fewer complaints: for example add `WHERE received_date >= '2026-11-02'` to the
 `COMPLAINT_AI` definition to classify only the last two weeks (about a third of the rows). New
 complaints are classified incrementally, so a steady stream costs in proportion to its volume.
@@ -171,7 +175,7 @@ lib/            Data interface, live (Snowflake) and sample sources, theme rules
 data/           Synthetic CSVs (see data/README.md)
 scripts/        Data generator, sample capture, hosted example build, screenshots
 sql/            setup.sql and cleanup.sql
-docs/           GitHub Pages guide and the hosted example in docs/try/
+docs/           GitHub Pages guide, DESIGN.md, and the hosted example in docs/try/
 ```
 
 ## License and disclaimer
