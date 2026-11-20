@@ -30,7 +30,7 @@
 
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--canvas); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
-a { color: inherit; }
+@layer base { a { color: inherit; } }
 .serif { font-family: var(--serif); }
 .tabular { font-variant-numeric: tabular-nums; }
 .muted { color: var(--muted); }

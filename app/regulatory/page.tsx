@@ -58,12 +58,12 @@ export default function RegulatoryPage() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-4 items-start">
-        <Card eyebrow="Timeliness" title="On-time resolution by product">
+        <Card eyebrow="Timeliness" title="On-time resolution by product (85–100%)">
           <div className="h-64" role="img" aria-label={`On-time resolution by regulator product: ${byProduct.map((x) => `${x.p} ${pct(x.onTime, 0)}`).join(', ')}`}>
             <ResponsiveContainer>
               <BarChart data={byProduct.map((x) => ({ name: x.p, v: Math.round(x.onTime * 1000) / 10 }))} layout="vertical" margin={{ left: 8, right: 16 }}>
                 <CartesianGrid stroke="var(--rule)" horizontal={false} />
-                <XAxis type="number" domain={[0, 100]} tick={AXIS} axisLine={false} tickLine={false} unit="%" />
+                <XAxis type="number" domain={[85, 100]} allowDataOverflow tick={AXIS} axisLine={false} tickLine={false} unit="%" />
                 <YAxis type="category" dataKey="name" tick={AXIS} width={110} axisLine={false} tickLine={false} />
                 <Tooltip content={<ChartTip unit="%" />} cursor={{ fill: 'var(--paper-2)' }} />
                 <Bar dataKey="v" name="On time" fill="var(--signal)" radius={[0, 4, 4, 0]} barSize={16} />

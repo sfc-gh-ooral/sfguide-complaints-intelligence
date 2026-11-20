@@ -5,6 +5,7 @@
 import { ArrowRight, ShieldAlert, X } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { DueTag, FlagTags, SentimentTag, StatusTag } from '@/components/Complaints';
 import { dayLong } from '@/components/fmt';
 import { Reasoning } from '@/components/Reasoning';
@@ -35,7 +36,7 @@ export function ComplaintDrawer({ row, onClose }: { row: ComplaintRow; onClose: 
   }, [onClose]);
   const c = d.data?.complaint;
 
-  return (
+  return createPortal(
     <>
       <div className="scrim" onClick={onClose} aria-hidden />
       <div ref={ref} tabIndex={-1} className="drawer outline-none" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
@@ -80,6 +81,7 @@ export function ComplaintDrawer({ row, onClose }: { row: ComplaintRow; onClose: 
           <Link href={`/complaint?id=${row.complaint_id}`} className="btn btn-primary w-full justify-center">Open the case file to draft and decide<ArrowRight className="w-4 h-4" aria-hidden /></Link>
         </div>
       </div>
-    </>
+    </>,
+    document.body,
   );
 }

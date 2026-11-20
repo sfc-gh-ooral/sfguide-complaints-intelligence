@@ -110,7 +110,7 @@ export default function ThemesPage() {
                     {t.weekly.map((v, i) => {
                       const a = v / max;
                       return <td key={i} className="!p-1"><div className="rounded text-[11px] tabular text-center py-1.5 font-semibold" title={`Week ${i + 1}: ${n(v)}`}
-                        style={{ background: `color-mix(in srgb, var(--brand) ${Math.round(8 + a * 80)}%, var(--paper))`, color: a > 0.45 ? 'var(--on-brand)' : 'var(--ink)' }}>{n(v)}</div></td>;
+                        style={{ background: `color-mix(in srgb, var(--brand) ${Math.round(8 + a * 80)}%, var(--paper))`, color: a > 0.58 ? 'var(--on-brand)' : 'var(--ink)' }}>{n(v)}</div></td>;
                     })}
                     <td className="text-right">{t.peakWeek ? <Tag tone={t.peakGrowth >= 0.5 ? 'warn' : 'muted'}>{growthLabel(t.peakGrowth)} · wk {t.peakWeek}</Tag> : <span className="muted">—</span>}</td>
                     <td>{t.issues ? <Tag tone="good">{t.issues} open</Tag> : <span className="muted text-xs">—</span>}</td>
