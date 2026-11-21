@@ -8,7 +8,7 @@ import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { DueTag, FlagTags, SentimentTag, StatusTag } from '@/components/Complaints';
 import { dayLong } from '@/components/fmt';
-import { Reasoning } from '@/components/Reasoning';
+import { CachedNote, Reasoning } from '@/components/Reasoning';
 import { ErrorBox } from '@/components/Status';
 import { PoweredBy, SampleAiBadge, Skeleton, SourceBadge } from '@/components/ui';
 import { useAsync } from '@/components/useAsync';
@@ -61,6 +61,7 @@ export function ComplaintDrawer({ row, onClose }: { row: ComplaintRow; onClose: 
               <div className="fade-up">
                 <p className="text-sm leading-relaxed rounded-lg p-3" style={{ background: 'var(--paper-2)' }}>{red.data.text}</p>
                 {red.data.source === 'mock' && <div className="mt-2"><SampleAiBadge /></div>}
+                <CachedNote p={red.data} />
               </div>
             )}
           </section>

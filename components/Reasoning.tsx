@@ -56,3 +56,14 @@ export function Reasoning({ kind, steps: custom }: { kind: ReasoningKind; steps?
     </div>
   );
 }
+
+/** After a Live answer arrives: says when it was reused from the saved table instead of calling the AI again. */
+export function CachedNote({ p }: { p: { source: 'mock' | 'snowflake'; cached?: boolean } }) {
+  if (p.source !== 'snowflake' || !p.cached) return null;
+  return (
+    <ol className="ledger-steps mt-2" aria-label="How this answer was produced">
+      <li className="done"><Check className="w-3.5 h-3.5 shrink-0 text-ok" aria-hidden />
+        <span>Reused the saved result from an earlier Live run; the AI function was not called again.</span></li>
+    </ol>
+  );
+}

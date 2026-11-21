@@ -68,6 +68,10 @@ meet WCAG AA (4.5:1) on `--paper`; the burgundy and teal were picked darker than
 - Content sits in a 12-column grid, max 1360 px. Density is medium-high: 13 px tables, 8 px row padding.
 - The queue opens complaints in a **right-hand drawer** (quick view) with a link to the full case file.
 
+### Tailwind theme
+
+`app/globals.css` maps every color token into an `@theme inline` block, so Tailwind utilities use the same values: `bg-paper`, `bg-canvas`, `text-ink`, `text-ink-2`, `text-muted`, `border-rule`, `text-brand`, `bg-brand-soft`, `text-signal`, `text-ok`, `text-danger`, `text-amber` and the chart colors `c1`–`c4`, plus `font-serif`, `shadow-paper` and `shadow-raised`. Because the block is `inline`, a utility resolves to the CSS variable, so it follows the dark theme with no `dark:` variant.
+
 ### Density
 
 Medium-high, tuned for analysts who scan hundreds of rows a day (values from `app/globals.css`):

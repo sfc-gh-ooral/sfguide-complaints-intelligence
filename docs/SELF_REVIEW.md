@@ -56,5 +56,10 @@ Last checked: November 2026 at commit after `356b07e` (review round 1).
 ## Should items skipped
 
 - Sample firm name "Northwind Bank": left for the maintainer's call.
-- Cached-result note in the reasoning steps: not done in this round; Live answers already show a source badge with the role and latency.
-- CSS variables mapped into a Tailwind `@theme` block: not done; the components use the variables directly and work in both themes.
+
+## Polish pass, November 20, 2026
+
+- Fresh clone, `npm ci`, `npm run dev`: pass (home page returns 200).
+- Dark mode: renders with the dark theme, no console errors.
+- Round-1 Should items 6 and 7, done: when Live mode reuses a saved AI_REDACT, AI_COMPLETE or AI_AGG result, a ledger step under the answer says so (`CachedNote` in `components/Reasoning.tsx`); the color, font and shadow tokens are mapped into a Tailwind `@theme inline` block (`app/globals.css`, documented in `docs/DESIGN.md`).
+- `npm run lint` and `tsc --noEmit`: pass.

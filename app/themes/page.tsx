@@ -7,7 +7,7 @@ import { AlertTriangle, ClipboardPlus } from 'lucide-react';
 import { useState } from 'react';
 import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
 import { day, growthLabel, n } from '@/components/fmt';
-import { Reasoning } from '@/components/Reasoning';
+import { CachedNote, Reasoning } from '@/components/Reasoning';
 import { ErrorBox, Tag } from '@/components/Status';
 import { AXIS, Card, ChartTip, Docket, PoweredBy, SampleAiBadge, ScreenSkeleton, SourceBadge, useStream, Markdown } from '@/components/ui';
 import { useAsync } from '@/components/useAsync';
@@ -60,6 +60,7 @@ function Insight({ t, onIssue }: { t: Theme; onIssue: () => void }) {
         : (
           <div className="space-y-4">
             <InsightBody ins={ins.data} />
+            <CachedNote p={ins.data} />
             <div className="pt-3 border-t space-y-2" style={{ borderColor: 'var(--rule)' }}>
               <div className="serif font-semibold">Open an issue for the root-cause owner</div>
               <label className="sr-only" htmlFor="owner">Owner</label>

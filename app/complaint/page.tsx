@@ -9,7 +9,7 @@ import { useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
 import { DueTag, FlagTags, SentimentTag, StatusTag } from '@/components/Complaints';
 import { day, dayLong, stamp } from '@/components/fmt';
-import { Reasoning } from '@/components/Reasoning';
+import { CachedNote, Reasoning } from '@/components/Reasoning';
 import { ErrorBox, Tag } from '@/components/Status';
 import { Card, Docket, PoweredBy, SampleAiBadge, ScreenSkeleton, SourceBadge, Sources, useStream } from '@/components/ui';
 import { useAsync } from '@/components/useAsync';
@@ -88,12 +88,13 @@ function Detail({ id }: { id: string }) {
                 <blockquote className="serif text-[15px] leading-relaxed pl-4" style={{ borderLeft: '3px solid var(--brand)' }}>{red.data.text}</blockquote>
                 <div className="flex gap-2 flex-wrap items-center mt-3">{red.data.source === 'mock' && <SampleAiBadge />}
                   <span className="text-[11px] muted">The unmasked text stays in SRC.COMPLAINTS; this screen shows only the AI_REDACT output. Masking is best-effort, so review it.</span></div>
+                <CachedNote p={red.data} />
               </div>
             )}
           </Card>
           <Card eyebrow="First response" title="Suggested response draft" right={<><PoweredBy>AI_COMPLETE</PoweredBy>{draft && <SourceBadge p={draft} />}</>}>
             {drafting ? <Reasoning kind="draft" steps={['Masking PII with AI_REDACT', `Reading the category (${c.subcategory}) and due date (${day(c.due_date)})`, 'Drafting the response with AI_COMPLETE', 'Saving the draft for review']} />
-              : draft ? <DraftBox draft={draft} onChange={() => {}} /> : (
+              : draft ? <><DraftBox draft={draft} onChange={() => {}} /><CachedNote p={draft} /></> : (
                 <div className="flex items-center gap-4 flex-wrap">
                   <p className="text-sm text-2 flex-1 min-w-[220px]">Draft a first response from the masked text, the AI category and the due date. You review and edit it before anything is sent.</p>
                   <button className="btn btn-ai" onClick={makeDraft}><FileText className="w-4 h-4" aria-hidden />Draft a response</button>
